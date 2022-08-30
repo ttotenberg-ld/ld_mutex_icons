@@ -38,7 +38,6 @@ def create_targets():
     num_targets = 40
     users_array = {'users': []}
     for i in range(num_targets):
-        # f = open('data/targets.json', 'w')
         user = random_ld_user()
         users_array['users'].append(user)
         with open('data/targets.json', 'w') as f:
@@ -50,7 +49,6 @@ Adds targets to the table
 '''
 def add_targets_to_table(data):
     target_table = pt()
-    # print(term.clear)
     target_table.field_names = [
         'key', 'name', 'version', 'plan', 'region', 'Targeted?'
     ]
