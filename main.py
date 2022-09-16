@@ -17,7 +17,7 @@ print(term.clear)
 
 
 '''
-Set sdk_key and feature_flag_key to your LaunchDarkly keys, then initialize the LD client
+Set sdk_key and feature_flag_key to your LaunchDarkly keys, then initialize the LD client. These keys are pulled from your Replit environment variables, AKA secrets.
 '''
 sdk_key = os.environ['SDK_KEY']
 feature_flag_key = os.environ['FLAG_KEY']
@@ -45,7 +45,7 @@ def create_targets():
 
 
 '''
-Adds targets to the table
+Add targets to the table
 '''
 def add_targets_to_table(data):
     target_table = pt()
@@ -59,7 +59,9 @@ def add_targets_to_table(data):
         else:
             feature = false_icon
         target_table.add_row([
-            i['key'][0:8] + '...', i['name'], i['custom']['version'], i['custom']['plan'], i['custom']['region'], str(feature)
+            i['key'][0:8] + '...', i['name'], i['custom']['version'],
+            i['custom']['plan'], i['custom']['region'],
+            str(feature)
         ])
     return target_table
 
@@ -88,7 +90,6 @@ if __name__ == '__main__':
     # create_targets()
     data = json.load(open("data/targets.json"))
     target_array = [False]
-    new_target_array = []
     while True:
         new_target_array = []
         for i in data['users']:
