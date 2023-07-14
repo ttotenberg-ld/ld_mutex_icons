@@ -1,4 +1,5 @@
 import blessed
+from dotenv import load_dotenv
 import json
 import ldclient
 from ldclient.config import Config
@@ -8,6 +9,10 @@ import time
 import unicodedata
 from utils.create_context import *
 
+'''
+Get environment variables
+'''
+load_dotenv()
 
 '''
 Create a terminal and clear it
@@ -19,12 +24,11 @@ print(term.clear)
 '''
 Set sdk_key and feature_flag_key to your LaunchDarkly keys, then initialize the LD client. These keys are pulled from your Replit environment variables, AKA secrets.
 '''
-# sdk_key = os.environ['SDK_KEY']
-# feature_flag_key = os.environ['FLAG_KEY']
-# ldclient.set_config(Config(sdk_key))
-sdk_key = "sdk-827b7628-5208-47be-a453-a11010d58242"
-feature_flag_key = "tt-targeting-test"
-ldclient.set_config(Config(sdk_key))
+sdk_key = os.environ.get('SDK_KEY')
+feature_flag_key = os.environ.get('FLAG_KEY')
+# sdk_key = "sdk-f736700e-5e55-4221-a045-3dfc960e01ef"
+# feature_flag_key = "release-new-ui"
+ldclient.set_config(Config(sdk_key,send_events=False))
 
 
 '''
@@ -38,7 +42,7 @@ false_icon = unicodedata.lookup('CROSS MARK')
 Create fake targets for this exercise
 '''
 def create_contexts():
-    num_contexts = 10
+    num_contexts = 2000
     contexts_array = []
     for i in range(num_contexts):
         context = create_multi_context()
@@ -50,13 +54,7 @@ def create_contexts():
 Add targets to the table
 '''
 def add_targets_to_table(data):
-    context_table = pt()
-    context_table.field_names = [
-        'User', 'Device', 'Organization', 'Targeted?'
-    ]
-    context_table.align["User"] = "l"
-    context_table.align["Device"] = "l"
-    context_table.align["Organization"] = "l"
+    context_table = []
 
     for i in data:
         feature = ldclient.get().variation(feature_flag_key, i, False)
@@ -65,32 +63,7 @@ def add_targets_to_table(data):
         else:
             feature = false_icon
 
-        context_table.add_row([
-            "key:  " + i['user']['key'][0:12] + '...', 
-            "key: " + i['device']['key'][0:12] + '...', 
-            "key:  " + i['organization']['key'][0:12] + '...', 
-            ""
-        ])
-
-        context_table.add_row([
-            "name: " + i['user']['name'], 
-            "os:  " + i['device']['os'], 
-            "name: " + i['organization']['name'], 
-            str(feature)
-        ])
-
-        context_table.add_row([
-            "plan: " + i['user']['plan'], 
-            "version: " + i['device']['version'], 
-            "region: " + i['organization']['region'], ""
-        ])
-
-        context_table.add_row([
-            "", 
-            "", 
-            "", 
-            ""
-        ])
+        context_table.append(feature)
         
     return context_table
 
@@ -101,7 +74,9 @@ Clears the terminal, then renders the table
 def render_table(table):
     with term.hidden_cursor():
         print(term.home + term.clear, end='')
-        print(table)
+        # print(table)
+        for i in table:
+            print(i,end = '')
 
 
 '''
@@ -116,7 +91,7 @@ Don't judge me! :) It's hacky but it works!
 '''
 if __name__ == '__main__':
     # Uncomment the line below and rerun the script if you want to generate new targets
-    create_contexts()
+    # create_contexts()
     data = json.load(open("data/contexts.json"))
     target_array = [False]
     while True:
