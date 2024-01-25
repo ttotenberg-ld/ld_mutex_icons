@@ -7,4 +7,4 @@ Note: In my terminal, the black and white squares counterintuitively are reverse
 1. `pip install requirements.txt`
 2. Rename `.env.example` to `.env`
 3. Replace the environment variables in `.env` with your values. Point it to any LaunchDarkly boolean flag you like!
-4. `python main.py`
+4. `python -i main.py`
