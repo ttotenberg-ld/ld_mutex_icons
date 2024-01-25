@@ -18,7 +18,7 @@ load_dotenv()
 Create a terminal and clear it
 '''
 term = blessed.Terminal()
-print(term.clear)
+print(term.clear, end='')
 
 
 '''
@@ -34,8 +34,10 @@ ldclient.set_config(Config(sdk_key,send_events=False))
 '''
 Define symbols for the table
 '''
-true_icon = unicodedata.lookup('WHITE HEAVY CHECK MARK')
-false_icon = unicodedata.lookup('CROSS MARK')
+# true_icon = unicodedata.lookup('WHITE HEAVY CHECK MARK')
+# false_icon = unicodedata.lookup('CROSS MARK')
+false_icon = unicodedata.lookup('WHITE LARGE SQUARE')
+true_icon = unicodedata.lookup('BLACK LARGE SQUARE')
 
 
 '''
@@ -46,10 +48,8 @@ def create_contexts():
     contexts_array = []
     for i in range(num_contexts):
         context = create_multi_context()
-        json.dumps(contexts_array.append(context))
-        with open('data/contexts.json', 'w') as f:
-            f.write(str(contexts_array))
-
+        contexts_array.append(context)
+    return contexts_array
 '''
 Add targets to the table
 '''
@@ -74,9 +74,17 @@ Clears the terminal, then renders the table
 def render_table(table):
     with term.hidden_cursor():
         print(term.home + term.clear, end='')
+        print(term.clear, end='')
         # print(table)
         for i in table:
-            print(i,end = '')
+            print(i, end = '')
+
+'''
+Defines what the listener should do when a flag change occurs
+'''
+def flag_change_listener(flag_change):
+    table = add_targets_to_table(data)
+    render_table(table)
 
 
 '''
@@ -89,19 +97,22 @@ So instead, I'm saving an array of trues/falses for each target user, updating t
 
 Don't judge me! :) It's hacky but it works!
 '''
+# if __name__ == '__main__':
+#     data = create_contexts()
+#     target_array = [False]
+#     while True:
+#         new_target_array = []
+#         for i in data:
+#             feature = ldclient.get().variation(feature_flag_key, i, False)
+#             new_target_array.append(feature)
+#         if target_array != new_target_array:
+#             table = add_targets_to_table(data)
+#             render_table(table)
+#             target_array = new_target_array
+#             new_target_array = []
+#         time.sleep(.1)
+
 if __name__ == '__main__':
-    # Uncomment the line below and rerun the script if you want to generate new targets
-    # create_contexts()
-    data = json.load(open("data/contexts.json"))
-    target_array = [False]
-    while True:
-        new_target_array = []
-        for i in data:
-            feature = ldclient.get().variation(feature_flag_key, i, False)
-            new_target_array.append(feature)
-        if target_array != new_target_array:
-            table = add_targets_to_table(data)
-            render_table(table)
-            target_array = new_target_array
-            new_target_array = []
-        time.sleep(.1)
+    data = create_contexts()
+    flag_change_listener(data)
+    listener = ldclient.get().flag_tracker.add_listener(flag_change_listener)

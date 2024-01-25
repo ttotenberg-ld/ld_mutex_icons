@@ -13,9 +13,15 @@ Construct a user context
 def create_user_context():
   user_key = "usr-" + str(uuid.uuid4())
   name = f'{names.get_first_name()} {names.get_last_name()}'
-  plan = random.choice(['platinum', 'silver', 'gold', 'diamond'])
+  plan = random.choice(['platinum', 'silver', 'gold', 'diamond', 'free'])
   role = random.choice(['reader', 'writer', 'admin'])
   metro = random.choice(['New York', 'Chicago', 'Minneapolis', 'Atlanta', 'Los Angeles', 'San Francisco', 'Denver', 'Boston'])
+
+  def beta_chance():
+    if random.randint(1, 10) <= 2:
+      return True
+    else:
+      return False
 
   user_context = Context.builder(user_key) \
   .set("kind", "user") \
@@ -23,6 +29,7 @@ def create_user_context():
   .set("plan", plan) \
   .set("role", role) \
   .set("metro", metro) \
+  .set("beta", beta_chance()) \
   .build()
 
   return user_context
@@ -51,11 +58,10 @@ Construct an organization context
 '''
 def create_organization_context():
   org_key = "org-" + str(uuid.uuid4())
-  # name = fake.company()
   key_name = random.choice([
-    {"key": "org-7f9f58eb-c8e8-4c40-9962-43b13eeec4ea", "name": "Mayo Clinic"}, 
-    {"key": "org-40fad050-3f91-49dc-8007-33d02f1869e0", "name": "IBM"}, 
-    {"key": "org-fca878d0-3cab-4301-91da-bbc6dbb08fff", "name": "3M"}
+    {"key": "org-7f9f58eb-c8e8-4c40-9962-43b13eeec4ea", "name": "Mayo Clinic", "employees": 76000}, 
+    {"key": "org-40fad050-3f91-49dc-8007-33d02f1869e0", "name": "IBM", "employees": 288000}, 
+    {"key": "org-fca878d0-3cab-4301-91da-bbc6dbb08fff", "name": "3M", "employees": 92000},
     ])
   region = random.choice(['NA', 'CN', 'EU', 'IN', 'SA'])
 
@@ -63,6 +69,7 @@ def create_organization_context():
   .set("kind", "organization") \
   .set("name", key_name["name"]) \
   .set("region", region) \
+  .set("employees", key_name["employees"]) \
   .build()
 
   return org_context
