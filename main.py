@@ -33,8 +33,6 @@ ldclient.set_config(Config(sdk_key,send_events=False))
 '''
 Define symbols for the table
 '''
-# true_icon = unicodedata.lookup('WHITE HEAVY CHECK MARK')
-# false_icon = unicodedata.lookup('CROSS MARK')
 false_icon = unicodedata.lookup('WHITE LARGE SQUARE')
 true_icon = unicodedata.lookup('BLACK LARGE SQUARE')
 
