@@ -4,7 +4,6 @@ import json
 import ldclient
 from ldclient.config import Config
 import os
-from prettytable import PrettyTable as pt
 import time
 import unicodedata
 from utils.create_context import *
