@@ -25,8 +25,6 @@ Set sdk_key and feature_flag_key to your LaunchDarkly keys, then initialize the 
 '''
 sdk_key = os.environ.get('SDK_KEY')
 feature_flag_key = os.environ.get('FLAG_KEY')
-# sdk_key = "sdk-f736700e-5e55-4221-a045-3dfc960e01ef"
-# feature_flag_key = "release-new-ui"
 ldclient.set_config(Config(sdk_key,send_events=False))
 
 

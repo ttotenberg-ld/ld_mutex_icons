@@ -3,9 +3,6 @@ import names
 import random
 import uuid
 from ldclient import Context
-from faker import Faker
-
-fake = Faker()
 
 '''
 Construct a user context
