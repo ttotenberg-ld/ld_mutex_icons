@@ -24,15 +24,20 @@ print(term.clear, end='')
 Set sdk_key and feature_flag_key to your LaunchDarkly keys, then initialize the LD client. These keys are pulled from your Replit environment variables, AKA secrets.
 '''
 sdk_key = os.environ.get('SDK_KEY')
-feature_flag_key = os.environ.get('FLAG_KEY')
+feature_flag_key_1 = os.environ.get('FLAG_KEY_1')
+feature_flag_key_2 = os.environ.get('FLAG_KEY_2')
+feature_flag_key_3 = os.environ.get('FLAG_KEY_3')
 ldclient.set_config(Config(sdk_key,send_events=False))
 
 
 '''
 Define symbols for the table
 '''
-false_icon = unicodedata.lookup('WHITE LARGE SQUARE')
-true_icon = unicodedata.lookup('BLACK LARGE SQUARE')
+none_icon = unicodedata.lookup('WHITE LARGE SQUARE')
+flag_key_1_icon = unicodedata.lookup('BLACK LARGE SQUARE')
+flag_key_2_icon = unicodedata.lookup('LARGE BLUE SQUARE')
+flag_key_3_icon = unicodedata.lookup('LARGE YELLOW SQUARE')
+conflict_icon = unicodedata.lookup('CROSS MARK')
 
 
 '''
@@ -54,13 +59,25 @@ def add_targets_to_table(data):
     context_table = []
 
     for i in data:
-        feature = ldclient.get().variation(feature_flag_key, i, False)
-        if feature:
-            feature = true_icon
-        else:
-            feature = false_icon
+        feature_1 = ldclient.get().variation(feature_flag_key_1, i, False)
+        feature_2 = ldclient.get().variation(feature_flag_key_2, i, False)
+        feature_3 = ldclient.get().variation(feature_flag_key_3, i, False)
 
-        context_table.append(feature)
+        values_array = [feature_1, feature_2, feature_3]
+        true_count = values_array.count(True)
+        
+        if true_count > 1:
+            icon = conflict_icon
+        elif feature_1:
+            icon = flag_key_1_icon
+        elif feature_2:
+            icon = flag_key_2_icon
+        elif feature_3:
+            icon = flag_key_3_icon
+        else:
+            icon = none_icon
+
+        context_table.append(icon)
         
     return context_table
 
@@ -83,31 +100,6 @@ def flag_change_listener(flag_change):
     table = add_targets_to_table(data)
     render_table(table)
 
-
-'''
-OK, word of warning: Everything below is pretty hacky. :)
-Ideally, I wanted to subscribe to flag changes and render the table only when there was an update. However, once I was mostly done creating this, I realized the Python SDK doesn't have that functionality yet! (as of fall 2022)
-
-https://docs.launchdarkly.com/sdk/features/flag-changes
-
-So instead, I'm saving an array of trues/falses for each target user, updating that array multiple times per second based on the latest targeting data from LaunchDarkly, and re-rendering the table if that has been updated.
-
-Don't judge me! :) It's hacky but it works!
-'''
-# if __name__ == '__main__':
-#     data = create_contexts()
-#     target_array = [False]
-#     while True:
-#         new_target_array = []
-#         for i in data:
-#             feature = ldclient.get().variation(feature_flag_key, i, False)
-#             new_target_array.append(feature)
-#         if target_array != new_target_array:
-#             table = add_targets_to_table(data)
-#             render_table(table)
-#             target_array = new_target_array
-#             new_target_array = []
-#         time.sleep(.1)
 
 if __name__ == '__main__':
     data = create_contexts()
