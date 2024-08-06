@@ -45,6 +45,8 @@ def create_contexts():
         context = create_multi_context()
         contexts_array.append(context)
     return contexts_array
+
+
 '''
 Add targets to the table
 '''
